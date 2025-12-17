@@ -78,7 +78,6 @@ Backend & Data Persistence
 
 Reporting & Analytics
 * Add basic reporting  Admins (total bookings, occupancy, revenue)
-* Generate summaries for movies and
 
 UI & UX Improvements
 * Improve seat layout visualization
