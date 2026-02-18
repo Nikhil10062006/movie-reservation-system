@@ -1,8 +1,18 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, memo, useCallback, lazy, Suspense } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
-import Navbar from "./navbar.jsx";
-function Options({ children, onShow, expanded, contents, setSelectedFilters }) {
+import getMovies from "../services/movieService.jsx";
+import { useFilters } from "../contexts/filterContexts.jsx";
+
+const Navbar = lazy(() => import("./navbar.jsx"));
+const MovieCards = lazy(() => import("./movieCards.jsx"));
+const Options = memo(function Options({
+  children,
+  onShow,
+  expanded,
+  contents,
+  setSelectedFilters,
+}) {
   return (
     <div>
       <button
@@ -48,63 +58,105 @@ function Options({ children, onShow, expanded, contents, setSelectedFilters }) {
       )}
     </div>
   );
-}
+});
 
 function MoviesExplore() {
   const [openFilter, setOpenFilter] = useState(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const [movies, setMovies] = useState([]);
-  const [selectedFilters, setSelectedFilters] = useState({
-    Languages: [],
-    Genre: [],
-    Format: [],
-  });
-
+  const { selectedFilters, setSelectedFilters } = useFilters();
   const navigate = useNavigate();
 
+  const toggleFilter = useCallback((filterName) => {
+    setOpenFilter((prev) => (prev === filterName ? null : filterName));
+  }, []);
+
   useEffect(() => {
-    setLoading(true);
-    setError(null);
+    const raceController = new AbortController(); //Adding controllers
+    const timeOutId = setTimeout(() => {
+      setLoading(true);
+      setError(null);
 
-    const params = {};
-    for (let category in selectedFilters) {
-      if (selectedFilters[category].length > 0) {
-        params[category] = selectedFilters[category].join(",");
-      }
+      getMovies(selectedFilters, raceController.signal)
+        .then((res) => {
+          setLoading(false);
+          setError(null);
+
+          if (!res.data || Array.isArray(res.data)) {
+            setError("Invalid response from the server");
+            return;
+          }
+          const moviesList = res.data.data;
+          const validateMovies = [];
+
+          for (const movie of moviesList) {
+            if (
+              movie &&
+              typeof movie._id === "string" &&
+              typeof movie.language === "string" &&
+              typeof movie.thumbnail === "string" &&
+              typeof movie.title === "string"
+            ) {
+              validateMovies.push({
+                ...movie,
+                title: movie.title || "Untitled",
+                thumbnail: movie.thumbnail || "default.jpg",
+              });
+            }
+          }
+
+          if (validateMovies.length === 0 && moviesList.length > 0)
+            setError("Corrupted Data received from the server");
+
+          setMovies((prev) => {
+            if (JSON.stringify(prev) === JSON.stringify(validateMovies)) {
+              return prev;
+            }
+            return validateMovies;
+          });
+        })
+        .catch((err) => {
+          if (err.name === "CanceledError" || err.name === "AbortError") {
+            return;
+          }
+          setLoading(false);
+          if (!err.response) {
+            setError("Network Error");
+            return;
+          }
+          const statusCode = err.response.status;
+          const message = err.response.data?.message || "Something went wrong";
+          setLoading(false);
+          if ([400, 409, 500, 503, 422].includes(statusCode)) {
+            setError(message);
+          } else {
+            setError("Unexpected Error Occurred");
+          }
+        });
+    }, 200);
+    return () => {
+      clearTimeout(timeOutId);
+      raceController.abort();
+    };
+  }, [selectedFilters]);
+
+  useEffect(() => {
+    const savedFilter = localStorage.getItem("filters");
+    if (savedFilter) {
+      setSelectedFilters(JSON.parse(savedFilter));
     }
-
-    axios
-      .get("http://localhost:5000/api/movies", {
-        params: params,
-      })
-      .then((res) => {
-        setLoading(false);
-        setError(null);
-        if (res.data.data.length > 0) {
-          setMovies(res.data.data);
-        }
-      })
-      .catch((err) => {
-        if (!err.response) {
-          setError("Network Error");
-          return;
-        }
-        const statusCode = err.response.status;
-        const message = err.response.data?.message || "Something went wrong";
-        setLoading(false);
-        if ([400, 409, 500, 503, 422].includes(statusCode)) {
-          setError(message);
-        } else {
-          setError("Unexpected Error Occurred");
-        }
-      });
+  }, []);
+  useEffect(() => {
+    localStorage.setItem("filters", JSON.stringify(selectedFilters));
   }, [selectedFilters]);
 
   return (
     <div>
       <header>
-        <Navbar />
+        <Suspense fallback={<p>Loading...</p>}>
+          <Navbar />
+        </Suspense>
       </header>
       <main>
         <aside>Advertisements</aside>
@@ -114,7 +166,7 @@ function MoviesExplore() {
             expanded={openFilter === "Languages"}
             contents={["Tamil", "English", "Malayalam", "Hindi", "Telegu"]}
             onShow={() => {
-              setOpenFilter(openFilter === "Languages" ? null : "Languages");
+              toggleFilter("Languages");
             }}
             setSelectedFilters={setSelectedFilters}
           >
@@ -134,7 +186,7 @@ function MoviesExplore() {
               "Social",
             ]}
             onShow={() => {
-              setOpenFilter(openFilter === "Genre" ? null : "Genre");
+              toggleFilter("Genre");
             }}
             setSelectedFilters={setSelectedFilters}
           >
@@ -144,7 +196,7 @@ function MoviesExplore() {
             expanded={openFilter === "Format"}
             contents={["2D", "3D"]}
             onShow={() => {
-              setOpenFilter(openFilter === "Format" ? null : "Format");
+              toggleFilter("Format");
             }}
             setSelectedFilters={setSelectedFilters}
           >
@@ -154,24 +206,20 @@ function MoviesExplore() {
         <section>
           <h3>Movies in Vellore</h3>
           <div onClick={() => navigate("/upcoming-movies")}>Coming soon</div>
-          <div>
-            <h3>Movies will appear here</h3>
-            {error && <p>{error}</p>}
-            {movies.length > 0 && (
-              <ul>
-                {movies.map((movie) => {
-                  return (
-                    <li id="cards" key={movie._id}>
-                      <p>{movie.thumbnail}</p>
-                      <h4>{movie.title}</h4>
-                      <p>{movie.language}</p>
-                    </li>
-                  );
-                })}
-              </ul>
-            )}
-            {!loading && movies.length === 0 && <p>No movies found </p>}
-          </div>
+          <Suspense fallback={<p>Loading...</p>}>
+            <div>
+              <h3>Movies will appear here</h3>
+              {error && <p>{error}</p>}
+              {movies.length > 0 && (
+                <ul>
+                  {movies.map((movie) => {
+                    return <MovieCards key={movie._id} movie={movie} />;
+                  })}
+                </ul>
+              )}
+              {!loading && movies.length === 0 && <p>No movies found </p>}
+            </div>
+          </Suspense>
         </section>
       </main>
     </div>

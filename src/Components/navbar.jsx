@@ -10,7 +10,7 @@ function Navbar() {
           type="text"
           placeholder="Search for Movies,Events,Plays,Sports and Activities"
         />
-        <Button>Location</Button>
+        <Button onClick={() => navigate('/select-location')}>Location</Button>
         <Button>Profile</Button>
         <Button onClick={() => navigate('/signup')}>Signup</Button>
       </div>
