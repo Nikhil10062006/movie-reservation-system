@@ -1,5 +1,4 @@
 import { useState, useEffect, memo, useCallback, lazy, Suspense } from "react";
-import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import getMovies from "../services/movieService.jsx";
 import { useFilters } from "../contexts/filterContexts.jsx";
@@ -74,6 +73,7 @@ function MoviesExplore() {
 
   useEffect(() => {
     const raceController = new AbortController(); //Adding controllers
+    localStorage.setItem("filters", JSON.stringify(selectedFilters));
     const timeOutId = setTimeout(() => {
       setLoading(true);
       setError(null);
@@ -83,7 +83,7 @@ function MoviesExplore() {
           setLoading(false);
           setError(null);
 
-          if (!res.data || Array.isArray(res.data)) {
+          if (!res || !res.data || Array.isArray(res.data)) {
             setError("Invalid response from the server");
             return;
           }
@@ -127,7 +127,6 @@ function MoviesExplore() {
           }
           const statusCode = err.response.status;
           const message = err.response.data?.message || "Something went wrong";
-          setLoading(false);
           if ([400, 409, 500, 503, 422].includes(statusCode)) {
             setError(message);
           } else {
@@ -147,9 +146,6 @@ function MoviesExplore() {
       setSelectedFilters(JSON.parse(savedFilter));
     }
   }, []);
-  useEffect(() => {
-    localStorage.setItem("filters", JSON.stringify(selectedFilters));
-  }, [selectedFilters]);
 
   return (
     <div>
@@ -213,7 +209,11 @@ function MoviesExplore() {
               {movies.length > 0 && (
                 <ul>
                   {movies.map((movie) => {
-                    return <MovieCards key={movie._id} movie={movie} />;
+                    return (
+                      <Suspense loading={<p>Loading...</p>}>
+                        <MovieCards key={movie._id} movie={movie} />
+                      </Suspense>
+                    );
                   })}
                 </ul>
               )}

@@ -7,6 +7,10 @@ function FilterProvider({ children }) {
     Languages: [],
     Genre: [],
     Format: [],
+    Date: [],
+    Categories: [],
+    MoreFilters: [],
+    Price: [],
   });
 
   return (
