@@ -1,4 +1,4 @@
-import { useState, useEffect, lazy, Suspense,useCallback } from "react";
+import { useState, useEffect, lazy, Suspense, useCallback } from "react";
 import Options from "./options.jsx";
 import getMovies from "../services/movieService.jsx";
 import { useFilters } from "../contexts/filterContexts.jsx";
@@ -26,9 +26,9 @@ function ActivitiesExplore() {
     const timeOutId = setTimeout(() => {
       getMovies(selectedFilters, controller.signal)
         .then((res) => {
+          setLoading(false);
           if (!res || !res.data || !Array.isArray(res.data.data)) {
             setErrors("No response received from the server");
-            setLoading(true);
             return;
           }
 
@@ -50,22 +50,19 @@ function ActivitiesExplore() {
                 title: activity.title || "Untitled",
               });
             }
-
-            if (validatedActivities.length === 0 && activitiesList.length > 0) {
-              setErrors("Coorupted Data received from the server");
-              setLoading(false);
-              return;
-            }
-
-            setActivities((prev) => {
-              if (
-                JSON.stringify(prev) === JSON.stringify(validatedActivities)
-              ) {
-                return prev;
-              }
-              return validatedActivities;
-            });
           }
+
+          if (validatedActivities.length === 0 && activitiesList.length > 0) {
+            setErrors("Coorupted Data received from the server");
+            return;
+          }
+
+          setActivities((prev) => {
+            if (JSON.stringify(prev) === JSON.stringify(validatedActivities)) {
+              return prev;
+            }
+            return validatedActivities;
+          });
         })
         .catch((err) => {
           setLoading(false);
@@ -76,7 +73,7 @@ function ActivitiesExplore() {
           }
 
           const message = err.response.data?.message || "Something went wrong";
-          const statusCode = err.response.statusCode;
+          const statusCode = err.response.status;
 
           if ([400, 409, 500, 503, 422].includes(statusCode)) {
             setErrors(message);
@@ -122,7 +119,7 @@ function ActivitiesExplore() {
           <Options
             onShow={() => toggleFilters("Categories")}
             expanded={openFilter === "Categories"}
-            contents={["Cricket", "MotorSports"]}
+            contents={["Amusement Parks"]}
             setSelectedFilters={setSelectedFilters}
           >
             Categories
@@ -139,7 +136,7 @@ function ActivitiesExplore() {
         <section>
           <h4>Activities will appear here</h4>
           {errors && <p>{errors}</p>}
-          {!loading && activities.length === 0 && <p>No movies found</p>}
+          {!loading && activities.length === 0 && <p>No activities found</p>}
           {activities.length > 0 && (
             <ul>
               {activities.map((activity) => {

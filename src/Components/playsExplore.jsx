@@ -29,7 +29,7 @@ function PlaysExplore() {
       getMovies(selectedFilters, controller.signal)
         .then((res) => {
           setLoading(false);
-          if (!res || !res.data || Array.isArray(res.data.data)) {
+          if (!res || !res.data || !Array.isArray(res.data.data)) {
             setErrors("No response received");
 
             return;
@@ -53,6 +53,7 @@ function PlaysExplore() {
                 title: plays.title || "Untitled",
               });
             }
+        }
 
             if (validatedPlays.length === 0 && playsList.length > 0) {
               setErrors("Corrupted Data received from the server");
@@ -63,21 +64,22 @@ function PlaysExplore() {
               }
               return validatedPlays;
             });
-          }
+          
         })
         .catch((err) => {
+            setLoading(false);
           if (err.name === "CanceledError" || err.name === "AbortError") {
             return;
           }
 
           if (!err.response) {
             setErrors("No response receioved from the server");
-            setLoading(false);
+            
             return;
           }
 
           const message = err.response.data?.message || "Something went wrong";
-          const statusCode = err.response.StatusCode;
+          const statusCode = err.response.status;
 
           if ([400, 409, 500, 503, 422].includes(statusCode)) {
             setErrors(message);
