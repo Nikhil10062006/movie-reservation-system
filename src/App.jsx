@@ -25,7 +25,7 @@ function App() {
           <Route path="/activities-explore" element={<ActivitiesExplore/>} />
           <Route path="/streams-explore" element={<StreamsExplore/>} />
           <Route path="/plays-explore" element={<PlaysExplore/>} />
-          <Route path="/sports-explore" element={<ActivitiesExplore/>} />
+          <Route path="/sports-explore" element={<SportsExplore/>} />
 
           <Route path="/location" element={<Location />} />
         </Routes>
