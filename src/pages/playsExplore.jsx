@@ -1,9 +1,9 @@
 import { useState, useEffect, lazy, Suspense,useCallback } from "react";
 import getMovies from "../services/movieService.jsx";
 import { useFilters } from "../contexts/filterContexts.jsx";
-import Options from "./options.jsx";
-const Navbar = lazy(() => import("./navbar.jsx"));
-const MovieCards = lazy(() => import("./movieCards.jsx"));
+import Options from "../components/options.jsx";
+const Navbar = lazy(() => import("../components/navbar.jsx"));
+const MovieCards = lazy(() => import("../components/movies/movieCards.jsx"));
 
 function PlaysExplore() {
   const { selectedFilters, setSelectedFilters } = useFilters();

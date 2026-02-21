@@ -1,6 +1,5 @@
 import { useState, useEffect } from "react";
 import {useNavigate} from "react-router-dom";
-import Button from "./button.jsx";
 function Navbar() {
   const navigate=useNavigate();
   return (
@@ -10,21 +9,21 @@ function Navbar() {
           type="text"
           placeholder="Search for Movies,Events,Plays,Sports and Activities"
         />
-        <Button onClick={() => navigate('/select-location')}>Location</Button>
-        <Button>Profile</Button>
-        <Button onClick={() => navigate('/signup')}>Signup</Button>
+        <button onClick={() => navigate('/select-location')}>Location</button>
+        <button>Profile</button>
+        <button onClick={() => navigate('/signup')}>Signup</button>
       </div>
       <div>
-        <Button onClick={() => navigate('/movies-explore')}>Movies</Button>
-        <Button onClick={() => navigate('/streams-explore')}>Stream</Button>
-        <Button onClick={() => navigate('/events-explore')}>Events</Button>
-        <Button onClick={() => navigate('/plays-explore')}>Plays</Button>
-        <Button onClick={() => navigate('/sports-explore')}>Sports</Button>
-        <Button onClick={() => navigate('/activities-explore')}>Activities</Button>
-        <Button onClick={() => navigate('/list-your-events')}>ListYourShow</Button>
-        <Button onClick={() => navigate('/corporates')}>Corporates</Button>
-        <Button onClick={() => navigate('/offers')}>Offers</Button>
-        <Button onClick={() => navigate('/gift-cards')}>Gift Cards</Button>
+        <button onClick={() => navigate('/movies-explore')}>Movies</button>
+        <button onClick={() => navigate('/streams-explore')}>Stream</button>
+        <button onClick={() => navigate('/events-explore')}>Events</button>
+        <button onClick={() => navigate('/plays-explore')}>Plays</button>
+        <button onClick={() => navigate('/sports-explore')}>Sports</button>
+        <button onClick={() => navigate('/activities-explore')}>Activities</button>
+        <button onClick={() => navigate('/list-your-events')}>ListYourShow</button>
+        <button onClick={() => navigate('/corporates')}>Corporates</button>
+        <button onClick={() => navigate('/offers')}>Offers</button>
+        <button onClick={() => navigate('/gift-cards')}>Gift Cards</button>
       </div>
     </>
   );

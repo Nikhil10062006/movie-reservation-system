@@ -1,13 +1,9 @@
 import { useState } from "react";
-import Navbar from "./navbar";
-import Main from "./main";
-import Footer from "./footer";
+import Navbar from "../components/navbar.jsx";
 function Home() {
   return (
     <div>
       <Navbar /> 
-      <Main />
-      <Footer />
     </div>
   );
 }

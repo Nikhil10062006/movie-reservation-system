@@ -2,62 +2,10 @@ import { useState, useEffect, memo, useCallback, lazy, Suspense } from "react";
 import { useNavigate } from "react-router-dom";
 import getMovies from "../services/movieService.jsx";
 import { useFilters } from "../contexts/filterContexts.jsx";
+import Options from "../components/options.jsx";
 
-const Navbar = lazy(() => import("./navbar.jsx"));
-const MovieCards = lazy(() => import("./movieCards.jsx"));
-const Options = memo(function Options({
-  children,
-  onShow,
-  expanded,
-  contents,
-  setSelectedFilters,
-}) {
-  return (
-    <div>
-      <button
-        aria-expanded={expanded}
-        aria-controls={children}
-        onClick={onShow}
-        type="button"
-      >
-        {children}
-      </button>
-      {expanded && (
-        <div>
-          <ul id={children}>
-            {contents.map((content, idx) => (
-              <li key={content}>
-                <button
-                  onClick={() => {
-                    setSelectedFilters((prevFilters) => {
-                      const alreadySelected =
-                        prevFilters[children].includes(content);
-                      if (alreadySelected) {
-                        return {
-                          ...prevFilters,
-                          [children]: prevFilters[children].filter(
-                            (item) => item !== content,
-                          ),
-                        };
-                      } else {
-                        return {
-                          ...prevFilters,
-                          [children]: [...prevFilters[children], content],
-                        };
-                      }
-                    });
-                  }}
-                >
-                  {content}
-                </button>
-              </li>
-            ))}
-          </ul>
-        </div>
-      )}
-    </div>
-  );
-});
+const Navbar = lazy(() => import("../components/navbar.jsx"));
+const MovieCards = lazy(() => import("../components/movies/movieCards.jsx"));
 
 function MoviesExplore() {
   const [openFilter, setOpenFilter] = useState(null);

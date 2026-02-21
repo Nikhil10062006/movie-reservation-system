@@ -1,16 +1,15 @@
 import { useState } from "react";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
-import MovieReservation from "./Components/movieReservation.jsx";
-import Signup from "./Components/signup.jsx";
-import Home from "./Components/home.jsx";
-import MoviesExplore from "./Components/moviesExplore.jsx";
+import MovieReservation from "./pages/movieReservation.jsx";
+import Signup from "./pages/signup.jsx";
+import Home from "./pages/home.jsx";
+import MoviesExplore from "./pages/moviesExplore.jsx";
 import FilterProvider from "./contexts/filterContexts.jsx";
-import Location from "./Components/location.jsx";
-import EventsExplore from "./Components/eventsExplore.jsx";
-import ActivitiesExplore from "./Components/activitiesExplore.jsx"
-import PlaysExplore from "./Components/playsExplore.jsx"
-import SportsExplore from "./Components/sportsExplore.jsx";
-import StreamsExplore from "./Components/streamsExplore.jsx"
+import EventsExplore from "./pages/eventsExplore.jsx";
+import ActivitiesExplore from "./pages/activitiesExplore.jsx"
+import PlaysExplore from "./pages/playsExplore.jsx"
+import SportsExplore from "./pages/sportsExplore.jsx";
+import StreamsExplore from "./pages/streamsExplore.jsx"
 function App() {
   return (
     <BrowserRouter>

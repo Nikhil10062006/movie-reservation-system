@@ -1,10 +1,10 @@
 import { useState, useEffect, lazy, Suspense, useCallback } from "react";
-import Options from "./options.jsx";
+import Options from "../components/options.jsx";
 import { useFilters } from "../contexts/filterContexts.jsx";
 import getMovies from "../services/movieService.jsx";
 
-const Navbar = lazy(() => import("./navbar.jsx"));
-const MovieCards = lazy(() => import("./movieCards.jsx"));
+const Navbar = lazy(() => import("../components/navbar.jsx"));
+const MovieCards = lazy(() => import("../components/movies/movieCards.jsx"));
 
 function EventsExplore() {
   const [openFilter, setOpenFilter] = useState(null);
