@@ -158,7 +158,7 @@ function MoviesExplore() {
                 <ul>
                   {movies.map((movie) => {
                     return (
-                      <Suspense loading={<p>Loading...</p>}>
+                      <Suspense loading={<p>Loading...</p>} key={movie._id}>
                         <MovieCards key={movie._id} movie={movie} />
                       </Suspense>
                     );
