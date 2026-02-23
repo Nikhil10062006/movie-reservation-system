@@ -2,7 +2,15 @@ import { useState, lazy, Suspense, useEffect } from "react";
 import { useParams } from "react-router-dom";
 import getTheatreDetails from "../services/movieTheatreService.jsx";
 import normalizeTheatreDetails from "../utils/normalizeTheatreDetails.jsx";
+import TheatreFilters from "../components/theatres/thatreFilters.jsx";
+import TheatreList from "../components/theatres/theatreList.jsx";
+import DateSelector from "../components/theatres/dateSelector.jsx";
+import MovieSummary from "../components/theatres/movieSummary.jsx";
+
 const Navbar = lazy(() => import("../components/navbar.jsx"));
+const TheatreCards = lazy(
+  () => import("../components/theatres/theatreCards.jsx"),
+);
 
 function MovieTheatre() {
   const { id } = useParams();
@@ -39,6 +47,23 @@ function MovieTheatre() {
           return;
         }
 
+        const dummyTheatres = [
+            {
+              theatreId: "101",
+              name: "PVR Phoenix",
+              shows: [
+                { showId: "1001", time: "10:00 AM", price: 250 },
+                { showId: "1002", time: "1:30 PM", price: 300 },
+              ],
+            },
+            {
+              theatreId: "102",
+              name: "INOX Marina",
+              shows: [{ showId: "1003", time: "11:00 AM", price: 220 }],
+            }
+          ]
+        setTheatres(dummyTheatres);
+
         const message = err.response.data.message || "Something went wrong";
         const statusCode = err.response.status;
 
@@ -54,6 +79,14 @@ function MovieTheatre() {
     };
   }, [id]);
 
+  if (loading) {
+    return <p>Loading...</p>;
+  }
+
+  // if (errors) {
+  //   return <p>{errors}</p>;
+  // }
+
   return (
     <>
       <header>
@@ -62,7 +95,14 @@ function MovieTheatre() {
         </Suspense>
       </header>
       <main>
-        
+        {theatres.length > 0 && (
+          <>
+            <MovieSummary />
+            <DateSelector />
+            <TheatreFilters />
+            <TheatreList theatres={theatres} />
+          </>
+        )}
       </main>
     </>
   );
