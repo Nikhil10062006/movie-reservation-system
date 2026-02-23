@@ -11,6 +11,7 @@ import PlaysExplore from "./pages/playsExplore.jsx";
 import SportsExplore from "./pages/sportsExplore.jsx";
 import StreamsExplore from "./pages/streamsExplore.jsx";
 import MoviesIndividual from "./pages/moviesIndividual.jsx";
+import MovieTheatre from "./pages/movieTheatre.jsx";
 function App() {
   return (
     <BrowserRouter>
@@ -27,6 +28,7 @@ function App() {
           <Route path="/plays-explore" element={<PlaysExplore />} />
           <Route path="/sports-explore" element={<SportsExplore />} />
           <Route path="/movies/:id" element={<MoviesIndividual />} />
+          <Route path="/movies/:id/select-theatre" element={<MovieTheatre />} />
 
           <Route path="/location" element={<Location />} />
         </Routes>

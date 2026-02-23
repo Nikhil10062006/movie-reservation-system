@@ -1,5 +1,5 @@
 import { useState, useEffect, lazy, Suspense } from "react";
-import {useParams} from "react-router-dom";
+import { useParams } from "react-router-dom";
 import getMoviesById from "../services/movieIndividualService.jsx";
 import normalizeMovieData from "../utils/normalizeMovieData.jsx";
 import MovieBanner from "../components/movies/movieBanner.jsx";
@@ -45,6 +45,15 @@ function MoviesIndividual() {
         if (err.name === "CanceledError" || err.name === "AbortError") {
           return;
         }
+        const dummyMovie = {
+          _id: "123",
+          title: "Interstellar",
+          duration: 169,
+          genre: "Sci-Fi",
+          poster_url: "https://",
+        };
+
+        setMovie(dummyMovie);
         if (!err.response) {
           setErrors("Network Error");
           return;
