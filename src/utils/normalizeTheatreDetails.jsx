@@ -1,5 +1,4 @@
 function normalizeTheatreDetails(theatre) {
-  // Basic validation
   if (
     !theatre ||
     typeof theatre !== "object" ||
