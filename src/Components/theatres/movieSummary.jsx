@@ -1,4 +1,4 @@
-import {useState } from "react";
+import {memo } from "react";
 function MovieSummary(){
 
 }

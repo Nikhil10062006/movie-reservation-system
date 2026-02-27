@@ -1,5 +1,8 @@
-import { useState } from "react";
-function TheatreFilters({ selectedFilters, setSelectedFilters }) {
+import { memo } from "react";
+const TheatreFilters = memo(function TheatreFilters({
+  selectedFilters,
+  setSelectedFilters,
+}) {
   function handlleFilterschange(e) {
     const { name, value } = e.target;
     setSelectedFilters((prev) => ({
@@ -71,5 +74,5 @@ function TheatreFilters({ selectedFilters, setSelectedFilters }) {
       />
     </>
   );
-}
+});
 export default TheatreFilters;
